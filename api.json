@@ -1,0 +1,320 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This is Cdxvirt API",
+    "version" : "v1",
+    "title" : "Cdxvirt API",
+    "contact" : {
+      "email" : "yhung124@gmail.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "192.168.34.121:6443",
+  "basePath" : "/api/v1/proxy/namespaces/default/services/cdxvirt-api/api/v1",
+  "tags" : [ {
+    "name" : "storage",
+    "description" : "Cdxvirt API"
+  } ],
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/storage/overview" : {
+      "get" : {
+        "tags" : [ "storage" ],
+        "summary" : "Get overview",
+        "description" : "Get storage OSD overview",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Overview"
+            }
+          },
+          "403" : {
+            "description" : "Get overview fail",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/storage/nodes/{nodeName}/slots/{slotId}" : {
+      "put" : {
+        "tags" : [ "storage" ],
+        "summary" : "Active or inactive osd of node",
+        "description" : "Active or inactive osd of node",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "nodeName",
+          "in" : "path",
+          "description" : "Name of target node",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "slotId",
+          "in" : "path",
+          "description" : "Slot ID of target osd",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "body",
+          "in" : "body",
+          "description" : "Active/Inactive node osd",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/OsdStatus"
+          }
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Wait to define"
+          },
+          "404" : {
+            "description" : "OSD or node not found",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/storage/replicas" : {
+      "put" : {
+        "tags" : [ "storage" ],
+        "summary" : "Modify replica size",
+        "description" : "Modify replica size of all pool",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "Replica size of all pool",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/ReplicaSize"
+          }
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Wait to define"
+          },
+          "406" : {
+            "description" : "Replica size is not acceptable",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/storage/crushLeaf" : {
+      "put" : {
+        "tags" : [ "storage" ],
+        "summary" : "Modify crush leaf type",
+        "description" : "Modify crush leaf type of all pool",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "body",
+          "in" : "body",
+          "description" : "Crush leaf type of all pool",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/crushLeaf"
+          }
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Wait to define"
+          },
+          "406" : {
+            "description" : "Crush leaf type is not acceptable",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/storage/checkReplica/{replicaSize}" : {
+      "get" : {
+        "tags" : [ "storage" ],
+        "summary" : "Check does replica size available",
+        "description" : "Check does replica size available",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "replicaSize",
+          "in" : "path",
+          "description" : "Expected replica size",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Wait to define"
+          },
+          "406" : {
+            "description" : "Replica size is not acceptable",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/storage/checkCrushLeaf/{leafType}" : {
+      "get" : {
+        "tags" : [ "storage" ],
+        "summary" : "Check does leaf type available",
+        "description" : "Check does leaf type available",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "leafType",
+          "in" : "path",
+          "description" : "Expected leaf type",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Wait to define"
+          },
+          "406" : {
+            "description" : "Crush leaf type is not acceptable",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "basicAuth" : {
+      "type" : "basic"
+    }
+  },
+  "security" : [ {
+    "basicAuth" : [ ]
+  } ],
+  "definitions" : {
+    "Error" : {
+      "type" : "object",
+      "properties" : {
+        "code" : {
+          "type" : "string",
+          "example" : "120"
+        },
+        "message" : {
+          "type" : "string",
+          "example" : "Node is not enough"
+        }
+      }
+    },
+    "Overview" : {
+      "type" : "object",
+      "properties" : {
+        "apiVersion" : {
+          "type" : "string",
+          "example" : "v1"
+        },
+        "timestamp" : {
+          "type" : "string",
+          "format" : "date-time",
+          "example" : "1985-04-12T23:20:50.52Z"
+        },
+        "dateTime" : {
+          "type" : "string",
+          "example" : "1475783909566791977"
+        },
+        "status" : {
+          "type" : "string",
+          "enum" : [ "success", "fail" ]
+        },
+        "data" : {
+          "$ref" : "#/definitions/OsdOverview"
+        }
+      }
+    },
+    "OsdOverview" : {
+      "type" : "object",
+      "properties" : {
+        "balanceStatus" : {
+          "type" : "string",
+          "enum" : [ "balance", "unbalance" ]
+        },
+        "estimateBalanceTime" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "nodes" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/OsdNode"
+          }
+        }
+      }
+    },
+    "OsdNode" : {
+      "type" : "object",
+      "properties" : {
+        "nodeIp" : {
+          "type" : "string",
+          "example" : "192.168.34.1"
+        },
+        "nodeName" : {
+          "type" : "string",
+          "example" : "node-12efb4"
+        },
+        "activeSlot" : {
+          "type" : "string",
+          "example" : "1,2"
+        },
+        "inactiveSlot" : {
+          "type" : "string",
+          "example" : "3"
+        },
+        "moveSlot" : {
+          "type" : "string",
+          "example" : "4"
+        },
+        "addSlot" : {
+          "type" : "string",
+          "example" : "5"
+        },
+        "errorSlot" : {
+          "type" : "string",
+          "example" : "6"
+        }
+      }
+    },
+    "OsdStatus" : {
+      "type" : "object",
+      "properties" : {
+        "status" : {
+          "type" : "string",
+          "enum" : [ "active", "inactibe" ]
+        }
+      }
+    },
+    "ReplicaSize" : {
+      "type" : "object",
+      "properties" : {
+        "status" : {
+          "type" : "string"
+        }
+      }
+    },
+    "crushLeaf" : {
+      "type" : "object",
+      "properties" : {
+        "crushLeaf" : {
+          "type" : "string",
+          "enum" : [ "osd", "host" ]
+        }
+      }
+    }
+  }
+}
